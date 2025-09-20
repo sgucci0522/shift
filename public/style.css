@@ -33,7 +33,7 @@ h1, h2 {
 
 /* Main content container */
 .container {
-    max-width: 1200px;
+    max-width: 95%;
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
@@ -269,15 +269,14 @@ th {
 
     table {
         width: 100%;
-        table-layout: fixed; /* Force columns to share width */
-        white-space: normal; /* Allow text to wrap */
-        font-size: 0.8em; /* Reduce font size */
+        white-space: normal; /* Allow text to wrap in general */
+        font-size: 0.9em; /* Increase font size for readability */
+        border-collapse: collapse;
     }
 
     th, td {
-        padding: 5px 2px; /* Reduce padding */
-        min-width: 55px; /* Give a minimum width to cells */
-        word-wrap: break-word; /* Break long words if necessary */
+        padding: 6px 4px; /* Adjust padding */
+        word-wrap: break-word;
         line-height: 1.3;
     }
     
@@ -296,9 +295,9 @@ th {
     }
 
     .shift-entry {
-        font-size: 0.85em;
-        padding: 4px 2px;
-        white-space: normal;
+        font-size: 0.9em;
+        padding: 4px 6px;
+        white-space: nowrap; /* Prevent shift times from wrapping */
         line-height: 1.2;
     }
 
