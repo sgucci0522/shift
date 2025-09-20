@@ -199,3 +199,38 @@ th {
 .time-select-group span {
     font-weight: bold;
 }
+
+/* Responsive Design for Mobile */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 0.5em;
+    }
+
+    .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    #nav-controls {
+        flex-wrap: wrap;
+    }
+
+    #schedule-container {
+        /* Keep horizontal scroll, but adjust font for readability */
+        font-size: 0.9em;
+    }
+
+    th, td {
+        padding: 6px 8px;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+
+    .time-select-group {
+        flex-wrap: wrap; /* Allow time selectors to wrap on small screens */
+    }
+}
