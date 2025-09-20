@@ -203,34 +203,109 @@ th {
 /* Responsive Design for Mobile */
 @media screen and (max-width: 768px) {
     body {
-        padding: 0.5em;
+        padding: 0; /* Remove body padding */
+        -webkit-text-size-adjust: 100%; /* Prevent iOS font size adjustments */
+    }
+
+    h1 {
+        font-size: 1.5em;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
     }
 
     .header-bar {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 1;
     }
 
     #nav-controls {
         flex-wrap: wrap;
+        gap: 5px;
+    }
+    #nav-controls h2 {
+        min-width: 120px;
+        font-size: 1.2em;
+        margin: 0.5em 0;
+    }
+
+    #period-controls {
+        gap: 10px;
+    }
+    #period-controls button {
+        padding: 8px 12px;
     }
 
     #schedule-container {
-        /* Keep horizontal scroll, but adjust font for readability */
-        font-size: 0.9em;
+        width: 100%;
+        overflow-x: auto; /* Keep horizontal scroll as a fallback */
+        -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
+    }
+
+    table {
+        width: 100%;
+        table-layout: fixed; /* Force columns to share width */
+        white-space: normal; /* Allow text to wrap */
+        font-size: 0.8em; /* Reduce font size */
     }
 
     th, td {
-        padding: 6px 8px;
+        padding: 5px 2px; /* Reduce padding */
+        min-width: 55px; /* Give a minimum width to cells */
+        word-wrap: break-word; /* Break long words if necessary */
+        line-height: 1.3;
+    }
+    
+    th:first-child, td:first-child {
+        position: sticky;
+        left: 0;
+        background-color: #f2f2f2;
+        z-index: 1;
+        min-width: 70px;
+    }
+    
+    th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .shift-entry {
+        font-size: 0.85em;
+        padding: 4px 2px;
+        white-space: normal;
+        line-height: 1.2;
     }
 
     .modal-content {
-        width: 95%;
-        margin: 10% auto;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border-radius: 0;
+        border: none;
+        max-width: none;
+        box-sizing: border-box;
+        padding-top: 50px; /* Space for close button */
+    }
+
+    .close-btn {
+        top: 15px;
+        right: 25px;
+        font-size: 36px;
+    }
+
+    #add-shift-form {
+        height: calc(100% - 60px); /* Adjust form height */
+        overflow-y: auto;
+        padding: 15px;
     }
 
     .time-select-group {
-        flex-wrap: wrap; /* Allow time selectors to wrap on small screens */
+        flex-wrap: wrap;
     }
 }
