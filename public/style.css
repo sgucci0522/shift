@@ -1,0 +1,201 @@
+/* Header Bar */
+.header-bar {
+    background-color: #343a40;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-bar a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.header-bar a:hover {
+    text-decoration: underline;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding: 1em;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #4a4a4a;
+}
+
+/* Navigation */
+#nav-controls, #period-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+#nav-controls h2 {
+    margin: 0;
+    min-width: 150px; /* Give it space */
+}
+
+#period-controls button.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+/* Schedule Table */
+#schedule-container {
+    width: 100%;
+    overflow-x: auto; /* Allow horizontal scrolling for the table */
+    margin: 20px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap; /* Prevent text wrapping in cells */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #e9ecef;
+    font-weight: bold;
+}
+
+/* Shift entry in table */
+.shift-entry {
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.shift-entry:hover {
+    background-color: #0056b3;
+}
+
+/* Controls */
+#controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#add-shift-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#add-shift-btn:hover {
+    background-color: #218838;
+}
+
+/* Modal (existing styles) */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 2; /* Higher z-index to be above sticky header */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Form (existing styles) */
+#add-shift-form .form-group {
+    margin-bottom: 15px;
+}
+
+#add-shift-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#add-shift-form input,
+#add-shift-form select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#add-shift-form button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#add-shift-form button:hover {
+    background-color: #0056b3;
+}
+
+.time-select-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.time-select-group select {
+    flex: 1;
+}
+
+.time-select-group span {
+    font-weight: bold;
+}
