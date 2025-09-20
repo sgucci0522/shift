@@ -31,6 +31,16 @@ h1, h2 {
     color: #4a4a4a;
 }
 
+/* Main content container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
 /* Navigation */
 #nav-controls, #period-controls {
     display: flex;
@@ -207,6 +217,16 @@ th {
         -webkit-text-size-adjust: 100%; /* Prevent iOS font size adjustments */
     }
 
+    .container {
+        width: 100%;
+        max-width: none;
+        padding: 10px;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        background-color: #fff;
+    }
+
     h1 {
         font-size: 1.5em;
         margin-top: 0.5em;
@@ -218,7 +238,7 @@ th {
         align-items: flex-start;
         gap: 10px;
         padding: 10px;
-        margin-bottom: 10px;
+        margin-bottom: 0; /* Remove margin when using container */
         position: sticky;
         top: 0;
         z-index: 1;

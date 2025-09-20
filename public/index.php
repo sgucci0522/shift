@@ -19,7 +19,8 @@ require_once __DIR__ . '/../src/check_auth.php';
             <a href="logout.php">ログアウト</a>
         </div>
     </div>
-    <h1>シフト管理表</h1>
+    <div class="container">
+        <h1>シフト管理表</h1>
 
     <div id="nav-controls">
         <button id="prev-month-btn">&lt; 前の月</button>
@@ -37,6 +38,7 @@ require_once __DIR__ . '/../src/check_auth.php';
 
     <div id="controls">
         <button id="add-shift-btn">シフトを追加</button>
+    </div>
     </div>
 
     <div id="add-shift-modal" class="modal">
