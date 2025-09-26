@@ -275,7 +275,7 @@ th {
     }
 
     th, td {
-        padding: 6px 4px; /* Adjust padding */
+        padding: 6px 2px; /* Reduce left/right padding */
         word-wrap: break-word;
         line-height: 1.3;
     }

@@ -45,6 +45,7 @@ require_once __DIR__ . '/../src/check_auth.php';
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <h2>新しいシフト</h2>
+            <div id="form-error-message" style="display: none; color: #D8000C; background-color: #FFD2D2; border: 1px solid #D8000C; padding: 10px; border-radius: 5px; margin-bottom: 15px;"></div>
             <form id="add-shift-form">
                 <input type="hidden" name="shift_id">
                 <div class="form-group">

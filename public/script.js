@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.querySelector('.close-btn');
     const addShiftForm = document.getElementById('add-shift-form');
     const employeeSelect = document.getElementById('employee');
+    const errorDiv = document.getElementById('form-error-message');
 
     // Hide add shift button for employees
     if (typeof USER_ROLE !== 'undefined' && USER_ROLE === 'employee') {
@@ -127,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     scheduleContainer.addEventListener('click', (event) => {
         const shiftElement = event.target.closest('.shift-entry');
-        if (shiftElement) {
+        if (shiftElement && (typeof USER_ROLE !== 'undefined' && USER_ROLE === 'admin')) { // Only admin can edit
             const shiftData = {
                 id: shiftElement.dataset.shiftId,
                 employee_id: shiftElement.dataset.employeeId,
@@ -141,6 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Modal Logic ---
     const openModal = async (shift = null) => {
+        // Clear previous error messages
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+
         // Always fetch employees to ensure the list is up-to-date
         try {
             const employees = await fetchApiData('get_employees');
@@ -193,12 +198,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     addShiftForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+        
+        // Clear previous error messages on new submission
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+
         const shiftId = addShiftForm.elements.shift_id.value;
         const shiftData = {
             employee_id: addShiftForm.elements.employee.value,
             shift_date: addShiftForm.elements['shift-date'].value,
-            start_time: `${addShiftForm.elements['start-hour'].value}:${addShiftForm.elements['start-minute'].value}`,
-            end_time: `${addShiftForm.elements['end-hour'].value}:${addShiftForm.elements['end-minute'].value}`,
+            start_time: `${addShiftForm.elements['start-hour'].value}:${addShiftForm.elements['start-minute'].value}:00`,
+            end_time: `${addShiftForm.elements['end-hour'].value}:${addShiftForm.elements['end-minute'].value}:00`,
         };
 
         let url = 'api.php';
@@ -215,16 +225,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(shiftData)
             });
+            
             const result = await response.json();
 
-            if (result.status === 'success') {
+            if (response.ok) { // Check if response status is 200-299
                 closeModal();
                 renderScheduleTable(); // Refresh table
             } else {
-                alert(`Error: ${result.message}`);
+                // Display error message from server inside the modal
+                errorDiv.textContent = result.message || 'An unknown error occurred.';
+                errorDiv.style.display = 'block';
             }
         } catch (error) {
-            alert('An error occurred while saving.');
+            // Display network or other unexpected errors
+            errorDiv.textContent = '保存中にエラーが発生しました。ネットワーク接続を確認してください。';
+            errorDiv.style.display = 'block';
         }
     });
 
