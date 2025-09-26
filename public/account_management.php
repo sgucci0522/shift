@@ -51,6 +51,11 @@ require_once __DIR__ . '/../src/check_admin.php';
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="display_order">並び順:</label>
+                    <input type="number" name="display_order" value="9999" required>
+                    <small>数字が小さいほど上に表示されます。</small>
+                </div>
+                <div class="form-group">
                     <label for="password">パスワード:</label>
                     <input type="password" name="password">
                     <small>パスワードを変更する場合のみ入力してください。</small>

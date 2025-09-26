@@ -164,7 +164,7 @@ try {
             $response['data'] = $data;
 
         } elseif ($action === 'get_employees') {
-            $sql = "SELECT id, name FROM employees ORDER BY name;";
+            $sql = "SELECT id, name FROM employees ORDER BY display_order, name;";
             $result = $conn->query($sql);
             $data = [];
             while($row = $result->fetch_assoc()) {

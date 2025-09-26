@@ -15,11 +15,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 options.body = JSON.stringify(data);
             }
             const response = await fetch(url, options);
+            const result = await response.json(); // Try to parse JSON regardless of response.ok
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Network response was not ok: ${response.status} ${response.statusText} - ${errorText}`);
+                throw new Error(result.message || `Network response was not ok: ${response.status}`);
             }
-            return await response.json();
+            return result;
         } catch (error) {
             console.error('API Error:', error);
             alert('API通信エラー: ' + error.message);
@@ -29,9 +29,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // --- User List Rendering ---
     async function renderUserList() {
-        const result = await fetchApiData('user_api.php?action=get_users');
+        const result = await fetchApiData('user_api.php'); // GET is default
         if (result.status === 'success') {
-            let tableHtml = '<table><thead><tr><th>ID</th><th>氏名</th><th>ユーザー名</th><th>役割</th><th>操作</th></tr></thead><tbody>';
+            let tableHtml = '<table><thead><tr><th>ID</th><th>氏名</th><th>ユーザー名</th><th>役割</th><th>並び順</th><th>操作</th></tr></thead><tbody>';
             result.data.forEach(user => {
                 tableHtml += `
                     <tr>
@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <td>${user.name}</td>
                         <td>${user.username}</td>
                         <td>${user.role}</td>
+                        <td>${user.display_order}</td>
                         <td>
                             <button class="edit-user-btn" data-user-id="${user.id}">編集</button>
                             <button class="delete-user-btn" data-user-id="${user.id}">削除</button>
@@ -91,10 +92,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             userForm.elements.name.value = user.name;
             userForm.elements.username.value = user.username;
             userForm.elements.role.value = user.role;
+            userForm.elements.display_order.value = user.display_order;
             userForm.elements.password.required = false; // Password not required for edit
             userForm.elements.password.placeholder = '変更する場合のみ入力';
         } else { // Add mode
             modalTitle.textContent = '新しいユーザーを追加';
+            userForm.elements.display_order.value = '9999'; // Default value
             userForm.elements.password.required = true; // Password required for new user
             userForm.elements.password.placeholder = '';
         }
@@ -126,6 +129,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             name: userForm.elements.name.value,
             username: userForm.elements.username.value,
             role: userForm.elements.role.value,
+            display_order: parseInt(userForm.elements.display_order.value, 10) || 9999,
         };
         if (userForm.elements.password.value) { // Only include password if provided
             userData.password = userForm.elements.password.value;
