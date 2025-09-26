@@ -56,6 +56,11 @@ if (isset($_SESSION['user_id'])) {
                 <label for="password">パスワード</label>
                 <input type="password" name="password" id="password" required>
             </div>
+            <div class="form-group">
+                <label for="remember_me" style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                    <input type="checkbox" name="remember_me" value="1" id="remember_me" style="width: auto; margin: 0;"> ログイン状態を保持する
+                </label>
+            </div>
             <button type="submit">ログイン</button>
         </form>
     </div>
