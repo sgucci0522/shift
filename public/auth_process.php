@@ -69,25 +69,25 @@ if (empty($username) || empty($password)) {
 
 $conn = get_db_connection();
 
-$stmt = $conn->prepare("SELECT id, name, username, password, role FROM employees WHERE username = ?");
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
+        $stmt = $conn->prepare("SELECT id, name, username, password, role, must_change_password FROM employees WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-if ($result->num_rows === 1) {
-    $user = $result->fetch_assoc();
-    
-    // Verify the password
-    if (password_verify($password, $user['password'])) {
-        // Password is correct, regenerate session ID for security
-        session_regenerate_id(true);
+        if ($result->num_rows === 1) {
+            $user = $result->fetch_assoc();
+            
+            // Verify the password
+            if (password_verify($password, $user['password'])) {
+                // Password is correct, regenerate session ID for security
+                session_regenerate_id(true);
 
-        // Store user info in session
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['user_role'] = $user['role'];
-        
+                // Store user info in session
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['name'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['user_role'] = $user['role'];
+                $_SESSION['must_change_password'] = (bool)$user['must_change_password'];        
         // Handle "Remember Me" functionality
         if ($remember_me) {
             try {

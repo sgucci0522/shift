@@ -5,22 +5,45 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// This file is in src/, so database.php is in the same directory.
 require_once __DIR__ . '/database.php';
 
+// --- Helper Functions ---
+
+function clear_remember_me_cookie(): void {
+    if (isset($_COOKIE['remember_me'])) {
+        unset($_COOKIE['remember_me']);
+        setcookie('remember_me', '', ['expires' => time() - 3600, 'path' => '/']);
+    }
+}
+
+function clear_all_user_tokens(mysqli $conn, int $employee_id): void {
+    $stmt = $conn->prepare("DELETE FROM auth_tokens WHERE employee_id = ?");
+    $stmt->bind_param("i", $employee_id);
+    $stmt->execute();
+}
+
 /**
- * Validates the persistent login cookie and logs the user in if valid.
- * @return bool True if login via cookie was successful, false otherwise.
+ * Redirects to the login page after clearing any persistent login cookie.
  */
-function login_via_cookie(): bool {
+function redirect_to_login(): void {
+    clear_remember_me_cookie();
+    header('Location: /shift/public/login.php');
+    exit;
+}
+
+/**
+ * Validates the persistent login cookie and attempts to log the user in.
+ */
+function validate_persistent_login(): void {
     $cookie = $_COOKIE['remember_me'] ?? '';
     if (!$cookie) {
-        return false;
+        // No cookie, nothing to do.
+        return;
     }
 
     list($selector, $validator) = explode(':', $cookie, 2);
     if (empty($selector) || empty($validator)) {
-        return false;
+        redirect_to_login();
     }
 
     try {
@@ -33,19 +56,16 @@ function login_via_cookie(): bool {
         $token = $result->fetch_assoc();
 
         if (!$token) {
-            clear_remember_me_cookie(); // Token not found or expired
-            return false;
+            redirect_to_login();
         }
 
-        // Validate the token
         if (!hash_equals($token['hashed_validator'], hash('sha256', $validator))) {
-            // Validator mismatch. Possible theft attempt.
+            // Possible theft attempt, clear all tokens for this user.
             clear_all_user_tokens($conn, $token['employee_id']);
-            clear_remember_me_cookie();
-            return false;
+            redirect_to_login();
         }
 
-        // Token is valid, log the user in
+        // Token is valid, fetch user info and log in.
         $stmt = $conn->prepare("SELECT id, name, username, role FROM employees WHERE id = ?");
         $stmt->bind_param("i", $token['employee_id']);
         $stmt->execute();
@@ -58,52 +78,41 @@ function login_via_cookie(): bool {
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['user_role'] = $user['role'];
-            
-            // Optional but recommended: Rotate token
-            // For simplicity, we'll skip this here.
-
-            return true;
+        } else {
+            // DB inconsistency: token exists but user doesn't.
+            clear_all_user_tokens($conn, $token['employee_id']);
+            redirect_to_login();
         }
 
     } catch (Exception $e) {
-        // Log error, don't expose details
         // error_log('Cookie login failed: ' . $e->getMessage());
-        return false;
+        redirect_to_login();
     }
-
-    return false;
-}
-
-/**
- * Clears the remember_me cookie from the browser.
- */
-function clear_remember_me_cookie(): void {
-    if (isset($_COOKIE['remember_me'])) {
-        unset($_COOKIE['remember_me']);
-        setcookie('remember_me', '', ['expires' => time() - 3600, 'path' => '/']);
-    }
-}
-
-/**
- * Clears all persistent login tokens for a specific user from the database.
- * @param mysqli $conn
- * @param int $employee_id
- */
-function clear_all_user_tokens(mysqli $conn, int $employee_id): void {
-    $stmt = $conn->prepare("DELETE FROM auth_tokens WHERE employee_id = ?");
-    $stmt->bind_param("i", $employee_id);
-    $stmt->execute();
 }
 
 
 // --- Main Authentication Check ---
 
-// If user is not logged in via session, try to log in via cookie.
 if (!isset($_SESSION['user_id'])) {
-    if (!login_via_cookie()) {
-        // If both session and cookie login fail, redirect to login page.
-        // This path needs to be absolute from the web root.
-        header('Location: /shift/public/login.php');
+    validate_persistent_login();
+    
+    // If session is still not set after the validation attempt, redirect to the plain login page.
+    if (!isset($_SESSION['user_id'])) {
+        redirect_to_login();
+    }
+}
+
+// --- Password Change Check ---
+
+// After authentication, check if user must change their password
+if (isset($_SESSION['must_change_password']) && $_SESSION['must_change_password']) {
+    // Get the current script name
+    $current_page = basename($_SERVER['PHP_SELF']);
+    
+    // If the user is not already on an allowed page, redirect them.
+    $allowed_pages = ['change_password.php', 'change_password_process.php', 'logout.php'];
+    if (!in_array($current_page, $allowed_pages)) {
+        header('Location: /shift/public/change_password.php');
         exit;
     }
 }

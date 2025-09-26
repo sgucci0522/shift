@@ -46,9 +46,9 @@ try {
         }
 
         if (!empty($data['password'])) {
-            // Update with new password
+            // Update with new password, and force user to change it on next login
             $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("UPDATE employees SET name = ?, username = ?, role = ?, password = ? WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE employees SET name = ?, username = ?, role = ?, password = ?, must_change_password = 1 WHERE id = ?");
             $stmt->bind_param("ssssi", $data['name'], $data['username'], $data['role'], $hashed_password, $data['user_id']);
         } else {
             // Update without changing password
