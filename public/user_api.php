@@ -13,8 +13,8 @@ try {
     $conn = get_db_connection();
 
     if ($method === 'GET') {
-        // Get all users, ordered by display_order
-        $result = $conn->query("SELECT id, name, username, role, display_order FROM employees ORDER BY display_order, name");
+        // Get all users, including Access_id
+        $result = $conn->query("SELECT id, name, username, role, display_order, Access_id FROM employees ORDER BY display_order, name");
         $users = [];
         while ($row = $result->fetch_assoc()) {
             $users[] = $row;
@@ -28,13 +28,12 @@ try {
         if (!isset($data['name'], $data['username'], $data['password'], $data['role'])) {
             throw new Exception('Missing required fields.');
         }
-        // Use provided display_order or default to 9999
         $display_order = $data['display_order'] ?? 9999;
+        $access_id = !empty($data['Access_id']) ? (int)$data['Access_id'] : null;
         $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
         
-        // must_change_password will be 1 by default from the DB schema
-        $stmt = $conn->prepare("INSERT INTO employees (name, username, password, role, display_order) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssi", $data['name'], $data['username'], $hashed_password, $data['role'], $display_order);
+        $stmt = $conn->prepare("INSERT INTO employees (name, username, password, role, display_order, Access_id) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssii", $data['name'], $data['username'], $hashed_password, $data['role'], $display_order, $access_id);
         
         if ($stmt->execute()) {
             $response['status'] = 'success';
@@ -50,16 +49,17 @@ try {
             throw new Exception('Missing required fields for update.');
         }
         $display_order = $data['display_order'];
+        $access_id = !empty($data['Access_id']) ? (int)$data['Access_id'] : null;
 
         if (!empty($data['password'])) {
-            // Update with new password, and force user to change it on next login
+            // Update with new password
             $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("UPDATE employees SET name = ?, username = ?, role = ?, display_order = ?, password = ?, must_change_password = 1 WHERE id = ?");
-            $stmt->bind_param("sssisi", $data['name'], $data['username'], $data['role'], $display_order, $hashed_password, $data['user_id']);
+            $stmt = $conn->prepare("UPDATE employees SET name = ?, username = ?, role = ?, display_order = ?, Access_id = ?, password = ?, must_change_password = 1 WHERE id = ?");
+            $stmt->bind_param("sssiisi", $data['name'], $data['username'], $data['role'], $display_order, $access_id, $hashed_password, $data['user_id']);
         } else {
             // Update without changing password
-            $stmt = $conn->prepare("UPDATE employees SET name = ?, username = ?, role = ?, display_order = ? WHERE id = ?");
-            $stmt->bind_param("sssii", $data['name'], $data['username'], $data['role'], $display_order, $data['user_id']);
+            $stmt = $conn->prepare("UPDATE employees SET name = ?, username = ?, role = ?, display_order = ?, Access_id = ? WHERE id = ?");
+            $stmt->bind_param("sssiii", $data['name'], $data['username'], $data['role'], $display_order, $access_id, $data['user_id']);
         }
         if ($stmt->execute()) {
             $response['status'] = 'success';

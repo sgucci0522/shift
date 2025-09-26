@@ -40,6 +40,10 @@ require_once __DIR__ . '/../src/check_admin.php';
                     <input type="text" name="name" required>
                 </div>
                 <div class="form-group">
+                    <label for="Access_id">Access_id:</label>
+                    <input type="number" name="Access_id">
+                </div>
+                <div class="form-group">
                     <label for="username">ユーザー名:</label>
                     <input type="text" name="username" required>
                 </div>
