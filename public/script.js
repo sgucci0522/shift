@@ -22,7 +22,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- State ---
     let currentDate = new Date();
-    let currentPeriod = 'first'; // 'first' or 'second'
+    // Determine initial period based on today's date
+    let currentPeriod = (new Date().getDate() <= 16) ? 'first' : 'second';
+
+    // --- Helper Functions ---
+    function updatePeriodButtons() {
+        if (currentPeriod === 'first') {
+            firstHalfBtn.classList.add('active');
+            secondHalfBtn.classList.remove('active');
+        } else {
+            secondHalfBtn.classList.add('active');
+            firstHalfBtn.classList.remove('active');
+        }
+    }
 
     // --- Data Fetching ---
     async function fetchApiData(action) {
@@ -115,15 +127,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     firstHalfBtn.addEventListener('click', () => {
         currentPeriod = 'first';
-        firstHalfBtn.classList.add('active');
-        secondHalfBtn.classList.remove('active');
+        updatePeriodButtons();
         renderScheduleTable();
     });
 
     secondHalfBtn.addEventListener('click', () => {
         currentPeriod = 'second';
-        secondHalfBtn.classList.add('active');
-        firstHalfBtn.classList.remove('active');
+        updatePeriodButtons();
         renderScheduleTable();
     });
 
@@ -278,5 +288,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // --- Initial Render ---
+    updatePeriodButtons(); // Set initial active button state
     renderScheduleTable();
 });
