@@ -106,6 +106,38 @@ try {
         }
         $stmt->close();
 
+    } elseif ($method === 'DELETE') {
+        // Only allow admin to delete shifts
+        if ($_SESSION['user_role'] !== 'admin') {
+            http_response_code(403); // Forbidden
+            $response['message'] = '権限がありません。';
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!isset($data['shift_id'])) {
+            throw new Exception('Shift ID is required for deletion.');
+        }
+
+        $stmt = $conn->prepare("DELETE FROM shifts WHERE id = ?");
+        $stmt->bind_param("i", $data['shift_id']);
+        
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
+                $response['status'] = 'success';
+                $response['message'] = 'Shift deleted successfully.';
+            } else {
+                // No rows were deleted, which might mean the shift_id was not found
+                http_response_code(404); // Not Found
+                $response['message'] = '指定されたシフトが見つかりませんでした。';
+            }
+        } else {
+            throw new Exception('Failed to delete shift: ' . $stmt->error);
+        }
+        $stmt->close();
+
     } else { // GET request
         // (GET logic remains the same as before)
         $action = $_GET['action'] ?? 'get_shifts';

@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const modal = document.getElementById('add-shift-modal');
     const addShiftBtn = document.getElementById('add-shift-btn');
+    const deleteShiftBtn = document.getElementById('delete-shift-btn');
     const closeBtn = document.querySelector('.close-btn');
     const addShiftForm = document.getElementById('add-shift-form');
     const employeeSelect = document.getElementById('employee');
@@ -177,9 +178,11 @@ document.addEventListener('DOMContentLoaded', function() {
             addShiftForm.elements['end-hour'].value = endHour;
             addShiftForm.elements['end-minute'].value = endMinute;
 
+            deleteShiftBtn.style.display = 'block'; // Show delete button
         } else { // Add mode
             modalTitle.textContent = '新しいシフト';
             addShiftForm.elements.shift_id.value = '';
+            deleteShiftBtn.style.display = 'none'; // Hide delete button
         }
 
         modal.style.display = 'block';
@@ -240,6 +243,37 @@ document.addEventListener('DOMContentLoaded', function() {
             // Display network or other unexpected errors
             errorDiv.textContent = '保存中にエラーが発生しました。ネットワーク接続を確認してください。';
             errorDiv.style.display = 'block';
+        }
+    });
+
+    deleteShiftBtn.addEventListener('click', async () => {
+        const shiftId = addShiftForm.elements.shift_id.value;
+        if (!shiftId) return;
+
+        if (confirm('このシフトを本当に削除しますか？')) {
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            try {
+                const response = await fetch('api.php', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ shift_id: shiftId })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    closeModal();
+                    renderScheduleTable();
+                } else {
+                    errorDiv.textContent = result.message || '削除中にエラーが発生しました。';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = '削除中にエラーが発生しました。ネットワーク接続を確認してください。';
+                errorDiv.style.display = 'block';
+            }
         }
     });
 

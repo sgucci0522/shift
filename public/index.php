@@ -128,7 +128,10 @@ require_once __DIR__ . '/../src/check_auth.php';
                         </select>
                     </div>
                 </div>
-                <button type="submit">保存</button>
+                <div class="form-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button type="submit" style="flex-grow: 1;">保存</button>
+                    <button type="button" id="delete-shift-btn" style="display: none; flex-grow: 1; background-color: #dc3545; border-color: #dc3545;">削除</button>
+                </div>
             </form>
         </div>
     </div>
